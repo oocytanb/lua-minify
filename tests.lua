@@ -186,6 +186,9 @@ function test_escapes()
 		[["Hello\32world"]],
 		[["\t\9\0\9\t"]],
 		[["don\'t \"quote\" me"]],
+		[["\a\b\\f\n\r\t\v\\\"\'"]],
+		[["FOO\
+BAR"]],
 	} do
 		local tokens = LuaMinify.CreateLuaTokenStream(source)
 		assertTokenSequence(tokens, {source})

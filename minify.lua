@@ -127,9 +127,11 @@ end
 
 local WhiteChars = lookupify{' ', '\n', '\t', '\r'}
 
-local EscapeForCharacter = {['\r'] = '\\r', ['\n'] = '\\n', ['\t'] = '\\t', ['"'] = '\\"', ["'"] = "\\'", ['\\'] = '\\'}
+local EscapeForCharacter = {['\r'] = '\\r', ['\n'] = '\\n', ['\t'] = '\\t', ['"'] = '\\"', ["'"] = "\\'", ['\\'] = '\\',
+							['\a'] = '\\a', ['\b'] = '\\b', ['\f'] = '\\f', ['\v'] = '\\v'}
 
-local CharacterForEscape = {['r'] = '\r', ['n'] = '\n', ['t'] = '\t', ['"'] = '"', ["'"] = "'", ['\\'] = '\\'}
+local CharacterForEscape = {['r'] = '\r', ['n'] = '\n', ['t'] = '\t', ['"'] = '"', ["'"] = "'", ['\\'] = '\\',
+							['a'] = '\a', ['b'] = '\b', ['f'] = '\f', ['v'] = '\v', ['\n'] = '\\\n'}
 
 local AllIdentStartChars = lookupify{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
                                      'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
