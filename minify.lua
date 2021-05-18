@@ -2942,12 +2942,14 @@ local function MinifyVariables(globalScope, rootScope)
 	rootScope.FirstFreeName = nextFreeNameIndex
 	local function doRenameScope(scope)
 		for _, var in pairs(scope.VariableList) do
-			local varName
-			repeat
-				varName = indexToVarName(scope.FirstFreeName)
-				scope.FirstFreeName = scope.FirstFreeName + 1
-			until not Keywords[varName] and not externalGlobals[varName]
-			var:Rename(varName)
+			if var.Name ~= '_ENV' then
+				local varName
+				repeat
+					varName = indexToVarName(scope.FirstFreeName)
+					scope.FirstFreeName = scope.FirstFreeName + 1
+				until not Keywords[varName] and not externalGlobals[varName]
+				var:Rename(varName)
+			end
 		end
 		for _, childScope in pairs(scope.ChildScopeList) do
 			childScope.FirstFreeName = scope.FirstFreeName
@@ -3172,16 +3174,18 @@ local function BeautifyVariables(globalScope, rootScope)
 
 	local function modify(scope)
 		for _, var in pairs(scope.VariableList) do
-			local name = 'L_'..localNumber..'_'
-			if var.Info.Type == 'Argument' then
-				name = name..'arg'..var.Info.Index
-			elseif var.Info.Type == 'LocalFunction' then
-				name = name..'func'
-			elseif var.Info.Type == 'ForRange' then
-				name = name..'forvar'..var.Info.Index
+			if var.Name ~= '_ENV' then
+				local name = 'L_'..localNumber..'_'
+				if var.Info.Type == 'Argument' then
+					name = name..'arg'..var.Info.Index
+				elseif var.Info.Type == 'LocalFunction' then
+					name = name..'func'
+				elseif var.Info.Type == 'ForRange' then
+					name = name..'forvar'..var.Info.Index
+				end
+				setVarName(var, name)
+				localNumber = localNumber + 1
 			end
-			setVarName(var, name)
-			localNumber = localNumber + 1
 		end
 		for _, child in pairs(scope.ChildScopeList) do
 			modify(child)

@@ -321,4 +321,48 @@ function test_longcomment()
 		LuaMinify.CreateLuaTokenStream, 'foo = [==[ bar ]===]')
 end
 
+function test_env_variable()
+	do
+		-- _ENV parameter
+		local source = [[function foo(_ENV)
+			return print
+		end
+
+		assert(foo({}) == nil)]]
+
+		local ast = LuaMinify.CreateLuaParser(source)
+		_assertAstStringEquals(ast, source)
+		_minify(ast)
+		_assertAstStringEquals(ast, "function a(_ENV)return print end assert(a({})==nil)")
+
+		_unminify(ast)
+		_assertAstStringEquals(ast, [[
+
+function G_1(_ENV)
+	return print
+end
+assert(G_1({}) == nil)]])
+	end
+
+	do
+		-- _ENV parameter
+		local source = [[local _ENV = { assert = assert }
+			assert(print == nil)]]
+
+		local ast = LuaMinify.CreateLuaParser(source)
+		_assertAstStringEquals(ast, source)
+		_minify(ast)
+		_assertAstStringEquals(ast, "local _ENV={assert=assert}assert(print==nil)")
+
+		_unminify(ast)
+		_assertAstStringEquals(ast, [[
+
+local _ENV = {
+	assert = assert
+}
+assert(print == nil)]])
+	end
+
+end
+
 lu.LuaUnit:run(...)
